@@ -13,7 +13,7 @@ class ProjectController extends Controller
 {
     public function index(Request $request)
     {
-        return new ProjectCollection(Project::all());
+        return new ProjectCollection(Project::paginate());
     }
 
     public function show(Request $request, Project $project)

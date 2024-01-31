@@ -21,5 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::apiResource('projects', ProjectController::class)->only(['index', 'show', 'store', 'update']);
+Route::apiResource('projects', ProjectController::class);
 Route::apiResource('images', ImageController::class)->only(['index', 'show', 'store']);
