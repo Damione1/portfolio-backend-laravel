@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,10 +17,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+// Protected routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('projects', ProjectController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('images', ImageController::class)->only(['store']);
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 });
 
-
-Route::apiResource('projects', ProjectController::class);
-Route::apiResource('images', ImageController::class)->only(['index', 'show', 'store']);
+// Public routes
+Route::group([], function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::apiResource('projects', ProjectController::class)->only(['index', 'show']);
+    Route::apiResource('images', ImageController::class)->only(['index', 'show']);
+});

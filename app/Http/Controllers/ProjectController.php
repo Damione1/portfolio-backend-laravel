@@ -8,12 +8,18 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
+use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProjectController extends Controller
 {
     public function index(Request $request)
     {
-        return new ProjectCollection(Project::paginate());
+        $projects = QueryBuilder::for(Project::class)
+            ->allowedFilters(['status', 'user_id'])
+            ->allowedSorts(['title', 'status', 'created_at', 'updated_at'])
+            ->paginate();
+        return new ProjectCollection($projects);
     }
 
     public function show(Request $request, Project $project)
@@ -24,7 +30,8 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
     {
         $validated = $request->validated();
-        $project = Project::create($validated);
+        $project = Auth::user()->projects()->create($validated);
+
         return new ProjectResource($project);
     }
 

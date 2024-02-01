@@ -16,6 +16,17 @@ services:
       - ./dbdata/:/var/lib/postgresql/data/
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
+  laravel:
+    build: .
+    depends_on:
+      - database
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - 8000:8000
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
   mailhog:
     image: mailhog/mailhog
     ports:

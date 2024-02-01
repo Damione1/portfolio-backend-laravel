@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('description', 8000)->nullable(false);
             $table->enum('status', ['published', 'draft', 'archived'])->default('published');
             $table->foreignId('cover_image')->nullable(true)->constrained('images');
+            $table->foreignId('user_id')->nullable(false)->constrained('users');
         });
     }
 
