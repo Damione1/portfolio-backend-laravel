@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreImageRequest;
 use App\Models\Image;
 use Illuminate\Http\Request;
 use App\Http\Resources\ImageCollection;
+use App\Http\Resources\ImageResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,7 +21,7 @@ class ImageController extends Controller
 
     public function show(Request $request, Image $image)
     {
-        return new ImageCollection($image);
+        return new ImageResource($image);
     }
 
     public function uploadFile(UploadedFile $file, $folder = null, $filename = null)
@@ -45,22 +48,26 @@ class ImageController extends Controller
         return $disk->url($filePath);
     }
 
-    public function store(Request $request)
+    public function store(StoreImageRequest $request)
     {
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
+        $validated = $request->validated();
         try {
-            $path = $this->uploadFile($request->file('image'), 'images');
-            $image = Image::create([
+            $path = $this->uploadFile($validated['image'], 'images');
+            $image =  Auth::user()->images()->create([
                 'path' => $path,
+                'filename' => $validated['image']->getClientOriginalName()
             ]);
         } catch (\Exception $e) {
             // Handle the error
             return response()->json(['error' => $e->getMessage()], 500);
         }
 
-        return new ImageCollection($image);
+        return new ImageResource($image);
+    }
+
+    public function destroy(Request $request, Image $image)
+    {
+        $image->delete();
+        return response()->noContent();
     }
 }

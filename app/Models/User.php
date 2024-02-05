@@ -49,4 +49,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class, 'user_id');
     }
+
+    public function skills(): HasMany
+    {
+        return $this->hasMany(Skill::class, 'user_id');
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(Image::class, 'user_id');
+    }
 }

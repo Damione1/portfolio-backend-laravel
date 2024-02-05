@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('path', 1000)->nullable(false);
             $table->string('filename', 1000)->nullable(false);
+            $table->foreignId('user_id')->nullable(false)->constrained('users');
         });
     }
 

@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('title', 100)->nullable(false);
-            $table->string('description', 8000)->nullable(false);
+            $table->longText('description', 8000)->nullable(false);
             $table->enum('status', ['published', 'draft', 'archived'])->default('published');
-            $table->foreignId('cover_image')->nullable(true)->constrained('images');
+            $table->foreignId('cover_image_id')->nullable()->constrained('images')->onDelete('set null');
             $table->foreignId('user_id')->nullable(false)->constrained('users');
         });
     }

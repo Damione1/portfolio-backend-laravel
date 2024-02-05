@@ -18,32 +18,61 @@ class ProjectController extends Controller
         $projects = QueryBuilder::for(Project::class)
             ->allowedFilters(['status', 'user_id'])
             ->allowedSorts(['title', 'status', 'created_at', 'updated_at'])
+            ->with('coverImage')
+            ->with('skills')
             ->paginate();
         return new ProjectCollection($projects);
     }
 
     public function show(Request $request, Project $project)
     {
+        $project->load('coverImage')
+            ->load('skills')
+            ->load('skills.image');
         return new ProjectResource($project);
     }
 
     public function store(StoreProjectRequest $request)
     {
         $validated = $request->validated();
-        $project = Auth::user()->projects()->create($validated);
+
+        $project = Auth::user()->Projects()->create($validated);
+
+        // Check if 'skills' array exists in the request
+        if ($request->has('skills')) {
+            $project->skills()->sync($request->skills);
+        }
 
         return new ProjectResource($project);
     }
+
+
 
     public function update(UpdateProjectRequest $request, Project $project)
     {
         $validated = $request->validated();
+
+        $skills = [];
+        if ($request->has('skills')) {
+            $skills = $request->skills;
+            unset($validated['skills']);
+        }
+
         $project->update($validated);
+
+        // sync the skills
+        $project->skills()->sync($skills);
+
         return new ProjectResource($project);
     }
 
+
     public function destroy(Request $request, Project $project)
     {
+        // Detach the skills for this project
+        $project->skills()->detach();
+
+        // Delete the project
         $project->delete();
         return response()->noContent();
     }

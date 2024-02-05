@@ -23,8 +23,10 @@ class StoreProjectRequest extends FormRequest
     {
         return [
             'title' => 'required|max:255',
-            'description' => 'required|max:8000',
-            'status' => 'optional|in:published,draft,archived',
+            'description' => 'required',
+            'status' => 'sometimes|in:published,draft,archived',
+            'cover_image' => 'sometimes|exists:images,id',
+            'skills' => 'sometimes|array|exists:skills,id',
         ];
     }
 }

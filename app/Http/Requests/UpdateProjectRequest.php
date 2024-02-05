@@ -23,8 +23,10 @@ class UpdateProjectRequest extends FormRequest
     {
         return [
             'title' => 'sometimes|required|max:255',
-            'description' => 'sometimes|required|max:8000',
+            'description' => 'sometimes|required',
             'status' => 'sometimes|required|in:published,draft,archived',
+            'cover_image_id' => 'sometimes|required|exists:images,id',
+            'skills' => 'sometimes|array|exists:skills,id',
         ];
     }
 }
