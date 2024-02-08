@@ -3,6 +3,7 @@
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\SkillController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('projects', ProjectController::class);
     Route::apiResource('images', ImageController::class);
     Route::apiResource('skills', SkillController::class);
+    Route::apiResource('experiences', ExperienceController::class);
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
