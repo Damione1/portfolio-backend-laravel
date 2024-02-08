@@ -6,15 +6,22 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Auth;
 
-class Image extends Model
+class Post extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'path',
-        'filename',
+        'title',
+        'content',
+        'status',
+        'cover_image_id',
+    ];
+
+    protected $hidden = [
+        'cover_image_id',
     ];
 
     public function user(): BelongsTo
@@ -22,16 +29,10 @@ class Image extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function project(): BelongsTo
+    public function coverImage(): HasOne
     {
-        return $this->belongsTo(Project::class, 'cover_image');
+        return $this->hasOne(Image::class, 'id', 'cover_image_id');
     }
-
-    public function skill(): BelongsTo
-    {
-        return $this->belongsTo(Skill::class, 'image');
-    }
-
 
     protected static function booted(): void
     {

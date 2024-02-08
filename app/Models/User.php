@@ -55,6 +55,16 @@ class User extends Authenticatable
         return $this->hasMany(Skill::class, 'user_id');
     }
 
+    public function experiences(): HasMany
+    {
+        return $this->hasMany(Experience::class, 'user_id');
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class, 'user_id');
+    }
+
     public function images(): HasMany
     {
         return $this->hasMany(Image::class, 'user_id');
