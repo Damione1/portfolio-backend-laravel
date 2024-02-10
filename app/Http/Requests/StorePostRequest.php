@@ -24,8 +24,9 @@ class StorePostRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'status' => 'required|in:published,draft,archived',
-            'cover_image' => 'sometimes|exists:images,id',
+            'excerpt' => 'sometimes|string|max:500',
+            'status' => 'sometimes|in:published,draft,archived',
+            'cover_image_id' => 'sometimes|exists:images,id',
         ];
     }
 }

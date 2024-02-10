@@ -36,7 +36,11 @@ class Image extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('user', function (Builder $builder) {
-            $builder->where('user_id', Auth::id());
+            if (request()->route('user_id')) {
+                $builder->where('user_id', request()->route('user_id'));
+            } else {
+                $builder->where('user_id', Auth::id());
+            }
         });
     }
 }

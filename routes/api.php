@@ -21,6 +21,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+
+
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('projects', ProjectController::class);
@@ -33,9 +36,24 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+Route::prefix('public')->group(function () {
+    Route::prefix('{user_id}')->group(function () {
+        Route::get('posts', [PostController::class, 'publicIndex']);
+        Route::get('posts/{id}', [PostController::class, 'publicShow']);
+
+        Route::get('projects', [ProjectController::class, 'publicIndex']);
+        Route::get('projects/{id}', [ProjectController::class, 'publicShow']);
+
+        Route::get('skills', [SkillController::class, 'publicIndex']);
+        Route::get('skills/{id}', [SkillController::class, 'publicShow']);
+
+        Route::get('experiences', [ExperienceController::class, 'publicIndex']);
+        Route::get('experiences/{id}', [ExperienceController::class, 'publicShow']);
+    });
+});
+
+
 // Public routes
 Route::group([], function () {
     Route::post('login', [AuthController::class, 'login']);
-    //Route::apiResource('projects', ProjectController::class)->only(['index', 'show']);
-    //Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 });

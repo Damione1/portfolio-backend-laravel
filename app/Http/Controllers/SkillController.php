@@ -8,6 +8,8 @@ use App\Models\Skill;
 use Illuminate\Http\Request;
 use App\Http\Resources\SkillCollection;
 use App\Http\Resources\SkillResource;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -22,12 +24,37 @@ class SkillController extends Controller
         return new SkillCollection($Skills);
     }
 
+    public function publicIndex(Request $request, string $user_id)
+    {
+        $Skills = QueryBuilder::for(Skill::class)
+            ->allowedSorts(['order'])
+            ->with('image')
+            ->paginate();
+        return new SkillCollection($Skills);
+    }
+
     public function show(Request $request, Skill $Skill)
     {
-        $Skill->load('projects')
-            ->load('image');
+        try {
+            $Skill->load('projects')
+                ->load('image');
+            return new SkillResource($Skill);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Skill not found'], Response::HTTP_NOT_FOUND);
+        }
+    }
 
-        return new SkillResource($Skill);
+    public function publicShow(string $user_id, string $id)
+    {
+        try {
+            $Skill = Skill::with('projects')
+                ->with('image')
+                ->where('id', $id)
+                ->firstOrFail();
+            return new SkillResource($Skill);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Skill not found'], Response::HTTP_NOT_FOUND);
+        }
     }
 
     public function store(StoreSkillRequest $request)

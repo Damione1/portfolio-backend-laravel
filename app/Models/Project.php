@@ -16,7 +16,8 @@ class Project extends Model
 
     protected $fillable = [
         'title',
-        'description',
+        'content',
+        'excerpt',
         'status',
         'cover_image_id',
         'skill_ids',
@@ -44,7 +45,12 @@ class Project extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('user', function (Builder $builder) {
-            $builder->where('user_id', Auth::id());
+            if (request()->route('user_id')) {
+                $builder->where('user_id',  intval(request()->route('user_id')))
+                    ->where('status', 'published');
+            } else {
+                $builder->where('user_id', Auth::id());
+            }
         });
     }
 }

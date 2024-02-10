@@ -22,10 +22,11 @@ class StoreProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|max:255',
-            'description' => 'required',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'excerpt' => 'sometimes|string|max:500',
             'status' => 'sometimes|in:published,draft,archived',
-            'cover_image' => 'sometimes|exists:images,id',
+            'cover_image_id' => 'sometimes|exists:images,id',
             'skills' => 'sometimes|array|exists:skills,id',
         ];
     }

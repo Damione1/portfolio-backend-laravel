@@ -16,6 +16,7 @@ class Post extends Model
     protected $fillable = [
         'title',
         'content',
+        'excerpt',
         'status',
         'cover_image_id',
     ];
@@ -37,7 +38,11 @@ class Post extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('user', function (Builder $builder) {
-            $builder->where('user_id', Auth::id());
+            if (request()->route('user_id')) {
+                $builder->where('user_id', request()->route('user_id'));
+            } else {
+                $builder->where('user_id', Auth::id());
+            }
         });
     }
 }

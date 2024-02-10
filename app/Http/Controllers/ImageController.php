@@ -21,7 +21,11 @@ class ImageController extends Controller
 
     public function show(Request $request, Image $image)
     {
-        return new ImageResource($image);
+        try {
+            return new ImageResource($image);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Image not found'], 404);
+        }
     }
 
     public function uploadFile(UploadedFile $file, $folder = null, $filename = null)

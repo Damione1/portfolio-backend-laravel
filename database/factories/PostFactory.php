@@ -20,6 +20,7 @@ class PostFactory extends Factory
         return [
             'title' => $this->faker->sentence,
             'content' => $this->faker->paragraph,
+            'excerpt' => $this->faker->sentence,
             'status' => $this->faker->randomElement(['published', 'draft', 'archived']),
             'user_id' => User::factory(),
         ];
