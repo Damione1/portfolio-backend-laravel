@@ -22,11 +22,10 @@ class UpdateSkillRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|max:100',
-            'level' => 'in:beginner,intermediate,advanced,expert,master',
-            'order' => 'integer',
-            'image_id' => 'nullable|exists:images,id',
-            'user_id' => 'required|exists:users,id',
+            'title' => 'sometimes|string|max:255',
+            'level' => 'sometimes|in:beginner,intermediate,advanced,expert,master',
+            'order' => 'sometimes|integer',
+            'image_id' => 'sometimes|nullable|exists:images,id',
         ];
     }
 }

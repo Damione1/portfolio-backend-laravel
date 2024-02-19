@@ -68,6 +68,9 @@ class SkillController extends Controller
     public function update(UpdateSkillRequest $request, Skill $Skill)
     {
         $validated = $request->validated();
+
+        $Skill->update($validated);
+
         return new SkillResource($Skill);
     }
 

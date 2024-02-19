@@ -18,7 +18,13 @@ class Skill extends Model
     protected $fillable = [
         'title',
         'order',
+        'level',
         'image_id'
+    ];
+
+    protected $hidden = [
+        'image_id',
+        'projects'
     ];
 
 

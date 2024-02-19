@@ -26,7 +26,7 @@ class UpdatePostRequest extends FormRequest
             'content' => 'sometimes|string',
             'excerpt' => 'sometimes|string|max:500',
             'status' => 'sometimes|in:published,draft,archived',
-            'cover_image_id' => 'sometimes|exists:images,id',
+            'cover_image_id' => 'sometimes|nullable|exists:images,id',
         ];
     }
 }

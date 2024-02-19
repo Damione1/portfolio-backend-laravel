@@ -22,10 +22,10 @@ class StoreSkillRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|max:100',
-            'level' => 'in:beginner,intermediate,advanced,expert,master',
-            'order' => 'integer',
-            'image_id' => 'nullable|exists:images,id',
+            'title' => 'required|string|max:255',
+            'level' => 'sometimes|in:beginner,intermediate,advanced,expert,master',
+            'order' => 'sometimes|integer',
+            'image_id' => 'sometimes|nullable|exists:images,id',
         ];
     }
 }
