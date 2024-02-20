@@ -66,31 +66,31 @@ class ProjectController extends Controller
     {
         $validated = $request->validated();
 
-        $project = Auth::user()->Projects()->create($validated);
-
-        // Check if 'skills' array exists in the request
-        if ($request->has('skills')) {
-            $project->skills()->sync($request->skills);
+        $skills = [];
+        if ($request->has('skill_ids')) {
+            $skills = $request->skill_ids;
+            unset($validated['skill_ids']);
         }
+
+        $project = Auth::user()->Projects()->create($validated);
+        $project->skills()->sync($skills);
 
         return new ProjectResource($project);
     }
-
-
-
     public function update(UpdateProjectRequest $request, Project $project)
     {
         $validated = $request->validated();
 
         $skills = [];
-        if ($request->has('skills')) {
-            $skills = $request->skills;
-            unset($validated['skills']);
+        if ($request->has('skill_ids')) {
+            $skills = $request->skill_ids;
+            unset($validated['skill_ids']);
         }
 
         $project->update($validated);
 
-        // sync the skills
+        $project->forceFill(['updated_at' => now()])->save();
+
         $project->skills()->sync($skills);
 
         return new ProjectResource($project);

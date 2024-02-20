@@ -20,12 +20,16 @@ class Project extends Model
         'excerpt',
         'status',
         'cover_image_id',
-        'skill_ids',
     ];
 
     protected $hidden = [
         'cover_image_id',
     ];
+
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class, 'project_skill', 'project_id', 'skill_id');
+    }
 
     public function user(): BelongsTo
     {
@@ -37,10 +41,6 @@ class Project extends Model
         return $this->hasOne(Image::class, 'id', 'cover_image_id');
     }
 
-    public function skills(): BelongsToMany
-    {
-        return $this->belongsToMany(Skill::class, 'project_skill', 'project_id', 'skill_id');
-    }
 
     protected static function booted(): void
     {

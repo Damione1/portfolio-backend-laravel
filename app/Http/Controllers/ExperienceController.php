@@ -61,11 +61,14 @@ class ExperienceController extends Controller
     {
         $validated = $request->validated();
 
-        $experience = Auth::user()->Experiences()->create($validated);
-
-        if ($request->has('skills')) {
-            $experience->skills()->sync($request->skills);
+        $skills = [];
+        if ($request->has('skill_ids')) {
+            $skills = $request->skill_ids;
+            unset($validated['skill_ids']);
         }
+
+        $experience = Auth::user()->Experiences()->create($validated);
+        $experience->skills()->sync($skills);
 
         return new ExperienceResource($experience);
     }
@@ -75,14 +78,15 @@ class ExperienceController extends Controller
         $validated = $request->validated();
 
         $skills = [];
-        if ($request->has('skills')) {
-            $skills = $request->skills;
-            unset($validated['skills']);
+        if ($request->has('skill_ids')) {
+            $skills = $request->skill_ids;
+            unset($validated['skill_ids']);
         }
 
         $experience->update($validated);
 
-        // Sync skills
+        $experience->forceFill(['updated_at' => now()])->save();
+
         $experience->skills()->sync($skills);
 
         return new ExperienceResource($experience);

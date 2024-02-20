@@ -29,7 +29,7 @@ class UpdateExperienceRequest extends FormRequest
             'end_date' => 'sometimes|nullable|date',
             'is_current' => 'sometimes|nullable|boolean',
             'type' => 'sometimes|required|in:work,education,internship,volunteer',
-            'skills' => 'sometimes|nullable|array',
+            'skill_ids' => 'sometimes|array|exists:skills,id',
         ];
     }
 }

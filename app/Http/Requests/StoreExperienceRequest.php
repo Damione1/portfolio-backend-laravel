@@ -30,7 +30,7 @@ class StoreExperienceRequest extends FormRequest
             'end_date' => 'nullable|date',
             'is_current' => 'nullable|boolean',
             'type' => 'required|in:work,education,internship,volunteer',
-            'skills' => 'nullable|array',
+            'skill_ids' => 'sometimes|array|exists:skills,id',
         ];
     }
 }
