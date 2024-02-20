@@ -19,9 +19,7 @@ class Experience extends Model
         'description',
         'start_date',
         'end_date',
-        'is_current',
         'type',
-        'skill_ids',
     ];
 
     public function user(): BelongsTo
@@ -31,7 +29,7 @@ class Experience extends Model
 
     public function skills(): BelongsToMany
     {
-        return $this->belongsToMany(Skill::class, 'project_skill', 'project_id', 'skill_id');
+        return $this->belongsToMany(Skill::class, 'experience_skill', 'experience_id', 'skill_id');
     }
 
     protected static function booted(): void

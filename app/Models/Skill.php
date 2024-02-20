@@ -24,7 +24,8 @@ class Skill extends Model
 
     protected $hidden = [
         'image_id',
-        'projects'
+        'projects',
+        'experiences',
     ];
 
 
@@ -40,7 +41,7 @@ class Skill extends Model
 
     public function experiences(): BelongsToMany
     {
-        return $this->belongsToMany(Project::class, 'experience_skill', 'skill_id', 'experience_id');
+        return $this->belongsToMany(Experience::class, 'experience_skill', 'skill_id', 'experience_id');
     }
 
     public function image(): HasOne

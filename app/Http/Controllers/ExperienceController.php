@@ -19,7 +19,7 @@ class ExperienceController extends Controller
     {
         $experiences = QueryBuilder::for(Experience::class)
             ->allowedFilters(['type', 'user_id'])
-            ->allowedSorts(['start_date', 'end_date', 'is_current', 'created_at', 'updated_at'])
+            ->allowedSorts(['start_date', 'end_date', 'created_at', 'updated_at'])
             ->with('skills')
             ->paginate();
         return new ExperienceCollection($experiences);
@@ -29,7 +29,7 @@ class ExperienceController extends Controller
     {
         $experiences = QueryBuilder::for(Experience::class)
             ->allowedFilters(['type'])
-            ->allowedSorts(['start_date', 'end_date', 'is_current', 'created_at', 'updated_at'])
+            ->allowedSorts(['start_date', 'end_date', 'created_at', 'updated_at'])
             ->with('skills')
             ->paginate();
         return new ExperienceCollection($experiences);
@@ -38,7 +38,9 @@ class ExperienceController extends Controller
     public function show(Request $request, Experience $experience)
     {
         try {
-            $experience->load('skills')->load('skills.image');
+            $experience
+                ->load('skills')
+                ->load('skills.image');
             return new ExperienceResource($experience);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Experience not found'], Response::HTTP_NOT_FOUND);
@@ -48,7 +50,8 @@ class ExperienceController extends Controller
     public function publicShow(string $user_id, string $id)
     {
         try {
-            $experience = Experience::with('skills')->with('skills.image')
+            $experience = Experience::with('skills')
+                ->with('skills.image')
                 ->where('id', $id)
                 ->firstOrFail();
             return new ExperienceResource($experience);
@@ -61,11 +64,14 @@ class ExperienceController extends Controller
     {
         $validated = $request->validated();
 
-        $experience = Auth::user()->Experiences()->create($validated);
-
-        if ($request->has('skills')) {
-            $experience->skills()->sync($request->skills);
+        $skills = [];
+        if ($request->has('skill_ids')) {
+            $skills = $request->skill_ids;
+            unset($validated['skill_ids']);
         }
+
+        $experience = Auth::user()->Experiences()->create($validated);
+        $experience->skills()->sync($skills);
 
         return new ExperienceResource($experience);
     }
@@ -75,14 +81,15 @@ class ExperienceController extends Controller
         $validated = $request->validated();
 
         $skills = [];
-        if ($request->has('skills')) {
-            $skills = $request->skills;
-            unset($validated['skills']);
+        if ($request->has('skill_ids')) {
+            $skills = $request->skill_ids;
+            unset($validated['skill_ids']);
         }
 
         $experience->update($validated);
 
-        // Sync skills
+        $experience->forceFill(['updated_at' => now()])->save();
+
         $experience->skills()->sync($skills);
 
         return new ExperienceResource($experience);
