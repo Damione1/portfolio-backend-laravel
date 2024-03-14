@@ -66,6 +66,12 @@ jobs:
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      
+      
+      - name: Convert to lower case
+        id: lower_case
+        run: echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]' | xargs echo ::set-output name=owner
+
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -76,8 +82,8 @@ jobs:
             context: .
             push: true
             tags: |
-              ${{ env.REGISTRY }}/${{ github.repository_owner.toLowerCase() }}/${{ github.event.repository.name }}:${{ steps.get_version.outputs.VERSION }}
-              ${{ env.REGISTRY }}/${{ github.repository_owner.toLowerCase() }}/${{ github.event.repository.name }}:latest
+              ${{ env.REGISTRY }}/${{ steps.lower_case.outputs.owner }}/${{ github.event.repository.name }}:${{ steps.get_version.outputs.VERSION }}
+              ${{ env.REGISTRY }}/${{ steps.lower_case.outputs.owner }}/${{ github.event.repository.name }}:latest
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
