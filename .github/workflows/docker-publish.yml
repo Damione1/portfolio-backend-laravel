@@ -27,10 +27,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
     
       - name: downcase REPO
         run: echo "REPO=${GITHUB_REPOSITORY@L}" >> "${GITHUB_ENV}"
@@ -75,7 +71,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.REPO }}:${{ steps.get_version.outputs.VERSION }}
+            ${{ env.REGISTRY }}/${{ env.REPO }}:${{ github.ref_name }}
             ${{ env.REGISTRY }}/${{ env.REPO }}:latest
 
       # Sign the resulting Docker image digest except on PRs.
