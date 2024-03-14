@@ -34,6 +34,11 @@ RUN if [ -n "${GITHUB_TOKEN}" ]; then \
         COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction; \
     fi
 
-# Run the command on container startup
-CMD ["nginx", "-g", "daemon off;"]
+# Install Supervisor
+RUN apt-get update && apt-get install -y supervisor
 
+# Add Supervisor configuration file
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Run Supervisor
+CMD ["/usr/bin/supervisord"]
