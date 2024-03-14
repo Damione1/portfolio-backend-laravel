@@ -18,14 +18,11 @@ COPY . /var/www/html/
 # Expose port 8000
 EXPOSE 8000
 
-# Install dependencies using composer image
-RUN composer install
+ARG GITHUB_TOKEN=""
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 
-# Generate application key
-RUN php artisan key:generate
-
-# Write permissions for Laravel storage and cache
-RUN chown -R www-data:www-data storage bootstrap/cache
-
+RUN if [ -n "${GITHUB_TOKEN}" ]; then export COMPOSER_AUTH="{\"github-oauth\": {\"github.com\": \"${GITHUB_TOKEN}\"}}"; fi && \
+    COMPOSER_MEMORY_LIMIT=-1 composer install -n --no-dev --ansi --prefer-dist --optimize-autoloader
+    
 # Run server
 CMD php artisan serve --host=0.0.0.0 --port=8000
