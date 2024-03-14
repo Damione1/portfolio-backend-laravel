@@ -14,7 +14,11 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository_owner }}/portfolio-backend-laravel
+  IMAGE_NAME: ${{ github.repository }}
+
+- name: Get the version
+  id: get_version
+  run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
 
 jobs:
   build:
@@ -69,10 +73,10 @@ jobs:
         uses: docker/build-push-action@v2
         with:
             context: .
-            push: ${{ github.event_name != 'pull_request' }}
+            push: true
             tags: |
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+              ghcr.io/${{ github.repository_owner.toLowerCase() }}/${{ github.event.repository.name }}:${{ steps.get_version.outputs.VERSION }}
+              ghcr.io/${{ github.repository_owner.toLowerCase() }}/${{ github.event.repository.name }}:latest
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
