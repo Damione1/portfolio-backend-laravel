@@ -67,11 +67,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       
-      
+
       - name: Convert to lower case
         id: lower_case
-        run: echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]' | xargs echo ::set-output name=owner
-
+        run: echo ${{ github.repository }} | awk '{print tolower($0)}' | xargs echo ::set-output name=repo
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -82,8 +81,8 @@ jobs:
             context: .
             push: true
             tags: |
-              ${{ env.REGISTRY }}/${{ steps.lower_case.outputs.owner }}/${{ github.event.repository.name }}:${{ steps.get_version.outputs.VERSION }}
-              ${{ env.REGISTRY }}/${{ steps.lower_case.outputs.owner }}/${{ github.event.repository.name }}:latest
+              ${{ env.REGISTRY }}/${{ steps.lower_case.outputs.repo }}:${{ steps.get_version.outputs.VERSION }}
+              ${{ env.REGISTRY }}/${{ steps.lower_case.outputs.repo }}:latest
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
