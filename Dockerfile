@@ -15,8 +15,17 @@ WORKDIR /var/www/html
 # Copy existing application directory contents
 COPY . /var/www/html/
 
+# Expose port 8000
+EXPOSE 8000
+
 # Install dependencies using composer image
 RUN composer install
 
-# Expose port 8000
-EXPOSE 8000
+# Generate application key
+RUN php artisan key:generate
+
+# Write permissions for Laravel storage and cache
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+# Run server
+CMD php artisan serve --host=0.0.0.0 --port=8000
