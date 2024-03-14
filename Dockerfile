@@ -21,8 +21,13 @@ EXPOSE 8000
 ARG GITHUB_TOKEN=""
 ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 
-RUN if [ -n "${GITHUB_TOKEN}" ]; then export COMPOSER_AUTH="{\"github-oauth\": {\"github.com\": \"${GITHUB_TOKEN}\"}}"; fi && \
-    COMPOSER_MEMORY_LIMIT=-1 composer install -n --no-dev --ansi --prefer-dist --optimize-autoloader
-    
+# Install dependencies
+RUN if [ -n "${GITHUB_TOKEN}" ]; then \
+        export COMPOSER_AUTH="{\"github-oauth\": {\"github.com\": \"${GITHUB_TOKEN}\"}}"; \
+        COMPOSER_MEMORY_LIMIT=-1 composer install -n --no-dev --ansi --prefer-dist --optimize-autoloader; \
+    else \
+        COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction; \
+    fi
+
 # Run server
 CMD php artisan serve --host=0.0.0.0 --port=8000
