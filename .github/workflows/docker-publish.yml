@@ -14,7 +14,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository | lower }}
 
 
 jobs:
@@ -66,17 +66,6 @@ jobs:
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      
-
-      - name: Convert to lower case
-        id: lower_case
-        run: |
-          echo "Original: ${{ github.repository }}"
-          echo "Lowercased: $(echo "${{ github.repository }}" | awk '{print tolower($0)})'"
-          echo "${{ github.repository }}" | awk '{print tolower($0)}' | xargs echo ::set-output name=repo
-
-      - name: Debug info
-        run: echo "${{ steps.lower_case.outputs.repo }}"
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -86,8 +75,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ steps.lower_case.outputs.repo }}:${{ steps.get_version.outputs.VERSION }}
-            ghcr.io/${{ steps.lower_case.outputs.repo }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
