@@ -75,9 +75,9 @@ jobs:
         with:
             context: .
             push: true
-            tags: |
-              ghcr.io/${{ github.repository_owner.toLowerCase() }}/${{ github.event.repository.name }}:${{ steps.get_version.outputs.VERSION }}
-              ghcr.io/${{ github.repository_owner.toLowerCase() }}/${{ github.event.repository.name }}:latest
+            tags:
+              - ghcr.io/${{ github.repository_owner.toLowerCase() }}/${{ github.event.repository.name }}:${{ steps.get_version.outputs.VERSION }}
+              - ghcr.io/${{ github.repository_owner.toLowerCase() }}/${{ github.event.repository.name }}:latest
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
