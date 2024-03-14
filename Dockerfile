@@ -18,8 +18,5 @@ COPY . /var/www/html/
 # Install dependencies using composer image
 RUN composer install
 
-ARG GITHUB_TOKEN=""
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
-
-RUN if [ -n "${GITHUB_TOKEN}" ]; then export COMPOSER_AUTH="{\"github-oauth\": {\"github.com\": \"${GITHUB_TOKEN}\"}}"; fi && \
-    COMPOSER_MEMORY_LIMIT=-1 composer install -n --no-dev --ansi --prefer-dist --optimize-autoloader
+# Expose port 8000
+EXPOSE 8000
