@@ -1,7 +1,8 @@
+# Base Image
 FROM php:8.3.2-fpm
 
 # Install necessary libraries for postgresql and git
-RUN apt-get update && apt-get install -y libpq-dev git zip unzip
+RUN apt-get update && apt-get install -y libpq-dev git zip unzip nginx
 
 # Install pdo_pgsql and pgsql PHP extensions
 RUN docker-php-ext-install pdo_pgsql pgsql
@@ -12,12 +13,16 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy existing application directory contents
+# Copy existing application directory
 COPY . /var/www/html/
 
-# Expose port 8000
-EXPOSE 8000
+# Copy Nginx configuration
+COPY default.conf /etc/nginx/sites-available/default
 
+# Expose port 80
+EXPOSE 80
+
+# Set environment variables for GitHub token
 ARG GITHUB_TOKEN=""
 ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 
@@ -29,5 +34,5 @@ RUN if [ -n "${GITHUB_TOKEN}" ]; then \
         COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction; \
     fi
 
-# Run server
-CMD php artisan serve --host=0.0.0.0 --port=8000
+# Run the command on container startup
+CMD service nginx start && php-fpm
