@@ -35,4 +35,5 @@ RUN if [ -n "${GITHUB_TOKEN}" ]; then \
     fi
 
 # Run the command on container startup
-CMD service nginx start && php-fpm
+CMD ["nginx", "-g", "daemon off;"]
+
