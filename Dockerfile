@@ -1,44 +1,30 @@
-# Base Image
-FROM php:8.3.2-fpm
+# Use the custom serversideup/php Docker image tagged as 'beta-8.3-unit'.
+# This image will be referred to as 'base' in the following steps.
+FROM serversideup/php:beta-8.3-unit as base
 
-# Install necessary libraries for postgresql and git
-RUN apt-get update && apt-get install -y libpq-dev git zip unzip nginx
+# Create a new Docker image named 'development' based on the 'base' image.
+FROM base as development
 
-# Install pdo_pgsql and pgsql PHP extensions
-RUN docker-php-ext-install pdo_pgsql pgsql
+# Provide two arguments for the build process: USER_ID and GROUP_ID
+ARG USER_ID
+ARG GROUP_ID
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Run a custom script inside the Docker image to match the 'www-data' user and group ID
+# to the USER_ID and GROUP_ID provided as arguments.
+# This resolves permission issues in a development environment.
+RUN docker-php-serversideup-set-id www-data ${USER_ID} ${GROUP_ID}
 
-# Set working directory
-WORKDIR /var/www/html
+# Create a new Docker image named 'deploy' based on the 'base' image.
+FROM base as deploy
 
-# Copy existing application directory
-COPY . /var/www/html/
+# Copy all files from the current directory to the /var/www/html directory in Docker image.
+# Also, change the ownership of the files to the 'www-data' user and group.
+COPY --chown=www-data:www-data . /var/www/html
 
-# Copy Nginx configuration
-COPY default.conf /etc/nginx/sites-available/default
+# Run composer, a PHP dependency management tool, to install project dependencies.
+# Options are provided to run composer quietly, without any scripts, dev-dependencies, and cache.
+# Also, autoloader is optimized after vendor packages are installed.
+RUN composer install --no-cache --no-dev --no-scripts --no-autoloader --ansi --no-interaction \
+    && composer dump-autoload -o
 
-# Expose port 80
-EXPOSE 80
-
-# Set environment variables for GitHub token
-ARG GITHUB_TOKEN=""
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
-
-# Install dependencies
-RUN if [ -n "${GITHUB_TOKEN}" ]; then \
-        export COMPOSER_AUTH="{\"github-oauth\": {\"github.com\": \"${GITHUB_TOKEN}\"}}"; \
-        COMPOSER_MEMORY_LIMIT=-1 composer install -n --no-dev --ansi --prefer-dist --optimize-autoloader; \
-    else \
-        COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction; \
-    fi
-
-# Install Supervisor
-RUN apt-get update && apt-get install -y supervisor
-
-# Add Supervisor configuration file
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Run Supervisor
-CMD ["/usr/bin/supervisord"]
+EXPOSE 8000
