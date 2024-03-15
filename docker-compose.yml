@@ -1,34 +1,40 @@
-version: '3'
+version: "3"
 
 services:
-  database:
-    image: 'postgres:latest'
-    restart: always
-    environment:
-      POSTGRES_DB: ${DB_DATABASE}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - 15432:5432
-    env_file:
-      - .env
-    volumes:
-      - ./dbdata/:/var/lib/postgresql/data/
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    database:
+        image: "postgres:latest"
+        restart: always
+        environment:
+            POSTGRES_DB: ${DB_DATABASE}
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - 15432:5432
+        env_file:
+            - .env
+        volumes:
+            - ./dbdata/:/var/lib/postgresql/data/
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  laravel:
-    build: .
-    depends_on:
-      - database
-    working_dir: /var/www/html
-    volumes:
-      - ./:/var/www/html
-    ports:
-      - 8000:8000
-    command: php artisan serve --host=0.0.0.0 --port=8000
+    # laravel:
+    #     image: ghcr.io/damione1/portfolio-backend-laravel:v0.0.32
+    #     depends_on:
+    #         - database
+    #     ports:
+    #         - 8000:8000
+    laravel:
+        build: .
+        depends_on:
+            - database
+        # working_dir: /var/www/html
+        # volumes:
+        #   - ./:/var/www/html
+        ports:
+            - 8000:8000
+        #command: php artisan serve --host=0.0.0.0 --port=8000
 
-  mailhog:
-    image: mailhog/mailhog
-    ports:
-      - 1025:1025
-      - 8025:8025
+    mailhog:
+        image: mailhog/mailhog
+        ports:
+            - 1025:1025
+            - 8025:8025
