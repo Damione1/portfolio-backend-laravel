@@ -5,6 +5,8 @@ FROM serversideup/php:beta-8.3-unit as base
 # Create a new Docker image named 'development' based on the 'base' image.
 FROM base as development
 
+ENV AUTORUN_LARAVEL_MIGRATION=true
+
 # Provide two arguments for the build process: USER_ID and GROUP_ID
 ARG USER_ID
 ARG GROUP_ID
@@ -27,4 +29,4 @@ COPY --chown=www-data:www-data . /var/www/html
 RUN composer install --no-cache --no-dev --no-scripts --no-autoloader --ansi --no-interaction \
     && composer dump-autoload -o
 
-EXPOSE 8000
+EXPOSE 80
