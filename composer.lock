@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "837bd93fc60ce42cb47fbcfd19701324",
+    "content-hash": "8d2a41eac338a6ec1c4200b4d2afe7eb",
     "packages": [
         {
             "name": "brick/math",
@@ -6980,6 +6980,59 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.2.7"
             },
             "time": "2023-12-08T13:03:43+00:00"
+        },
+        {
+            "name": "ueberdosis/laravel-docker-health-check",
+            "version": "0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ueberdosis/laravel-docker-health-check.git",
+                "reference": "256a38ccda2c012a4488e5ad0406e67518076287"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ueberdosis/laravel-docker-health-check/zipball/256a38ccda2c012a4488e5ad0406e67518076287",
+                "reference": "256a38ccda2c012a4488e5ad0406e67518076287",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^7.0|^8.0|^9.0|^10.0",
+                "php": "^7.4|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Ueberdosis\\DockerHealthCheck\\Providers\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ueberdosis\\DockerHealthCheck\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kris Siepert",
+                    "email": "kris.siepert@ueber.io"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/ueberdosis/laravel-docker-health-check/issues",
+                "source": "https://github.com/ueberdosis/laravel-docker-health-check/tree/0.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/ueberdosis/",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-02-16T08:20:47+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
